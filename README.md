@@ -2,7 +2,12 @@
 Front End Interview API mockup
 
 ```markdown
-Use `DataService.ts` as a mockup of API for FE code exam.
+Use `src/DataService.ts` as a mockup of API for FE code exam.
+
+Where:
+- DataService.getUsers() => get list of users
+- DataService.getFavoriteColor(id) => get favorite color by id
+
 ```
 
 - Run `npm install` to install dependencies
