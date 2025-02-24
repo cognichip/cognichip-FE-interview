@@ -6,7 +6,7 @@ export interface FavoriteColorType {
 export interface UserDataType {
     id: string;
     name: string;
-    favoriteColor?: FavoriteColorType;
+    favoriteColor?: string;
 }
 
 const firstNames:string[] = [
@@ -22,12 +22,6 @@ const firstNames:string[] = [
     "Maria", "David", "Daisy", "Max", "Athena", "Julian", "Ella", "Simon", "Mila", "Christopher"
 ];
 
-
-const userDataMock: UserDataType[] = firstNames.map((name:string) => ({
-    name,
-    id: Math.floor(Math.random() * 65536).toString()
-}));
-
 const getRandomColor = (): string => {
     const digits = '0123456789ABCDEF';
     let color = '#';
@@ -37,19 +31,66 @@ const getRandomColor = (): string => {
     return color;
 }
 
+let userTable:UserDataType[] = firstNames.map((name:string) => ({
+    name: name,
+    id: Math.floor(Math.random() * 65536).toString(),
+    color: ''
+}));
+console.log('userTable', userTable);
+
+let colorTable: FavoriteColorType[] = userTable.map(user => ({
+    id: user.id,
+    color: getRandomColor()
+}));
+console.log('colorTable', colorTable);
+
+
 export class DataService {
     public static async getUsers(): Promise<UserDataType[]> {
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve(userDataMock);
-            }, 500); 
+                resolve(userTable);
+            }, 250); 
         });
     }
 
-    public static async getFavoriteColor(id:string): Promise<FavoriteColorType> {
+    public static async getFavoriteColor(id: string): Promise<FavoriteColorType> {
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve({ id: id, color: getRandomColor() });
+                const user = userTable.find(user => user.id === id);
+                if (user) {
+                    const favoriteColor = colorTable.find(color => color.id === id);
+                    if (favoriteColor) {
+                        resolve(favoriteColor);
+                    } else {
+                        resolve({ id: id, color: '' });
+                    }
+                } else {
+
+
+                    
+                    resolve({ id: id, color: getRandomColor() });
+                }
+            }, 1); 
+        });
+    }
+
+    public static async postUsers(name:string): Promise<UserDataType> {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const newUser:UserDataType = {name: name, id: Math.floor(Math.random() * 65536).toString()};
+                userTable.unshift(newUser);
+                resolve(newUser);
+            }, 10); 
+        });
+    }
+
+    public static async postFavoriteColor(id:string, favoriteColor:string): Promise<FavoriteColorType> {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const newColor:FavoriteColorType = { id: id, color: favoriteColor };
+                colorTable.unshift(newColor);
+                resolve(newColor);
             }, 10); 
         });
     }
